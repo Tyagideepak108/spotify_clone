@@ -41,6 +41,10 @@ class SpotifyPlayer {
         this.progressBar?.addEventListener('mousedown', () => this.onSeekStart());
         this.progressBar?.addEventListener('mouseup', () => this.onSeekEnd());
         
+        // Touch events for mobile
+        this.progressBar?.addEventListener('touchstart', () => this.onSeekStart());
+        this.progressBar?.addEventListener('touchend', () => this.onSeekEnd());
+        
         // Volume control
         this.volumeBar?.addEventListener('input', () => this.adjustVolume());
         
@@ -55,6 +59,12 @@ class SpotifyPlayer {
         
         // Keyboard shortcuts
         this.setupKeyboardShortcuts();
+        
+        // Mobile menu
+        this.setupMobileMenu();
+        
+        // Responsive handling
+        this.setupResponsiveHandling();
     }
 
     togglePlayPause() {
@@ -299,6 +309,169 @@ class SpotifyPlayer {
         return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
     }
 
+    setupMobileMenu() {
+        const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+        const sidebar = document.querySelector('.sidebar');
+        
+        mobileMenuBtn?.addEventListener('click', () => {
+            sidebar?.classList.toggle('mobile-open');
+        });
+        
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && 
+                !sidebar?.contains(e.target) && 
+                !mobileMenuBtn?.contains(e.target)) {
+                sidebar?.classList.remove('mobile-open');
+            }
+        });
+    }
+    
+    setupResponsiveHandling() {
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            this.handleResize();
+        });
+        
+        // Initial resize handling
+        this.handleResize();
+    }
+    
+    handleResize() {
+        const width = window.innerWidth;
+        const sidebar = document.querySelector('.sidebar');
+        
+        // Close mobile sidebar on desktop
+        if (width > 768) {
+            sidebar?.classList.remove('mobile-open');
+        }
+        
+        // Adjust layouts based on screen size
+        this.adjustResponsiveLayout(width);
+        
+        // Update cards container
+        this.updateCardsLayout(width);
+        
+        // Adjust player for different screen sizes
+        this.adjustPlayerLayout(width);
+    }
+    
+    adjustResponsiveLayout(width) {
+        const main = document.querySelector('.main');
+        const cardsContainers = document.querySelectorAll('.cards-container');
+        
+        if (width <= 480) {
+            // Ultra mobile optimizations
+            main?.style.setProperty('--mobile-padding', '0.2rem');
+            this.createVolumeFAB();
+        } else if (width <= 768) {
+            // Tablet optimizations
+            main?.style.setProperty('--mobile-padding', '0.3rem');
+            this.removeVolumeFAB();
+        } else {
+            // Desktop optimizations
+            main?.style.removeProperty('--mobile-padding');
+            this.removeVolumeFAB();
+        }
+    }
+    
+    updateCardsLayout(width) {
+        const cardsContainers = document.querySelectorAll('.cards-container');
+        
+        cardsContainers.forEach(container => {
+            if (width <= 360) {
+                container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(100px, 1fr))';
+            } else if (width <= 480) {
+                container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(120px, 1fr))';
+            } else if (width <= 768) {
+                container.style.gridTemplateColumns = 'repeat(auto-fit, minmax(140px, 1fr))';
+            } else {
+                container.style.removeProperty('grid-template-columns');
+            }
+        });
+    }
+    
+    adjustPlayerLayout(width) {
+        const musicPlayer = document.querySelector('.music_player');
+        const controls = document.querySelector('.controls');
+        
+        if (width <= 480) {
+            // Mobile: Stack layout
+            musicPlayer?.style.setProperty('grid-template-columns', '1fr');
+            musicPlayer?.style.setProperty('grid-template-rows', 'auto auto');
+            musicPlayer?.style.setProperty('height', '120px');
+            controls?.style.setProperty('display', 'none');
+        } else if (width <= 768) {
+            // Tablet: Adjusted grid
+            musicPlayer?.style.setProperty('grid-template-columns', '1.5fr 2fr 1fr');
+            musicPlayer?.style.removeProperty('grid-template-rows');
+            musicPlayer?.style.setProperty('height', '100px');
+            controls?.style.removeProperty('display');
+        } else {
+            // Desktop: Default grid
+            musicPlayer?.style.removeProperty('grid-template-columns');
+            musicPlayer?.style.removeProperty('grid-template-rows');
+            musicPlayer?.style.removeProperty('height');
+            controls?.style.removeProperty('display');
+        }
+    }
+    
+    createVolumeFAB() {
+        if (document.querySelector('.volume-fab')) return;
+        
+        const fab = document.createElement('div');
+        fab.className = 'volume-fab';
+        fab.innerHTML = '<i class="fa-solid fa-volume-high"></i>';
+        
+        fab.addEventListener('click', () => {
+            this.toggleVolumeModal();
+        });
+        
+        document.body.appendChild(fab);
+    }
+    
+    removeVolumeFAB() {
+        const fab = document.querySelector('.volume-fab');
+        fab?.remove();
+    }
+    
+    toggleVolumeModal() {
+        let modal = document.querySelector('.volume-modal');
+        
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.className = 'volume-modal';
+            modal.innerHTML = `
+                <div class="volume-modal-content">
+                    <div class="volume-slider-container">
+                        <i class="fa-solid fa-volume-low"></i>
+                        <input type="range" min="0" max="100" class="volume-slider-mobile" value="${this.volumeBar.value}">
+                        <i class="fa-solid fa-volume-high"></i>
+                    </div>
+                    <button class="volume-close">×</button>
+                </div>
+            `;
+            
+            const slider = modal.querySelector('.volume-slider-mobile');
+            slider.addEventListener('input', (e) => {
+                this.volumeBar.value = e.target.value;
+                this.adjustVolume();
+            });
+            
+            modal.querySelector('.volume-close').addEventListener('click', () => {
+                modal.remove();
+            });
+            
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) modal.remove();
+            });
+            
+            document.body.appendChild(modal);
+        } else {
+            modal.remove();
+        }
+    }
+
     initializePlayer() {
         // Set initial values
         this.currTimeSpan.textContent = '00:00';
@@ -316,7 +489,7 @@ class SpotifyPlayer {
     }
 }
 
-// Add CSS for animations
+// Add CSS for animations and responsive features
 const style = document.createElement('style');
 style.textContent = `
     @keyframes ripple {
@@ -326,12 +499,32 @@ style.textContent = `
         }
     }
     
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+    
     .play-overlay {
         position: absolute;
         top: 50%;
         left: 50%;
         transform: translate(-50%, -50%);
-        background: rgba(29, 215, 96, 0.9);
+        background: linear-gradient(45deg, rgba(29, 215, 96, 0.9), rgba(30, 215, 96, 0.9));
         border-radius: 50%;
         width: 50px;
         height: 50px;
@@ -339,28 +532,206 @@ style.textContent = `
         align-items: center;
         justify-content: center;
         opacity: 0;
-        transition: all 0.3s ease;
+        transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
         pointer-events: none;
+        backdrop-filter: blur(10px);
+        box-shadow: 0 8px 25px rgba(29, 215, 96, 0.3);
     }
     
     .card:hover .play-overlay {
         opacity: 1;
-        transform: translate(-50%, -50%) scale(1.1);
+        transform: translate(-50%, -50%) scale(1.2);
+        animation: pulse 2s infinite;
     }
     
     .play-overlay i {
         color: white;
         font-size: 18px;
         margin-left: 2px;
+        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
     }
     
     .daylight, .david {
-        transition: opacity 0.3s ease;
+        transition: all 0.3s ease;
+    }
+    
+    .volume-fab {
+        animation: fadeInUp 0.5s ease;
+    }
+    
+    .volume-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.8);
+        backdrop-filter: blur(10px);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 3000;
+        animation: fadeInUp 0.3s ease;
+    }
+    
+    .volume-modal-content {
+        background: linear-gradient(145deg, #181818, #242424);
+        padding: 2rem;
+        border-radius: 1rem;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+        border: 1px solid rgba(29, 215, 96, 0.3);
+        position: relative;
+        min-width: 300px;
+    }
+    
+    .volume-slider-container {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+    }
+    
+    .volume-slider-mobile {
+        flex: 1;
+        height: 6px;
+        border-radius: 3px;
+        background: rgba(255,255,255,0.2);
+        appearance: none;
+        cursor: pointer;
+    }
+    
+    .volume-slider-mobile::-webkit-slider-thumb {
+        appearance: none;
+        width: 20px;
+        height: 20px;
+        background: linear-gradient(45deg, #1bd760, #1ed760);
+        border-radius: 50%;
+        margin-top: -7px;
+        box-shadow: 0 4px 12px rgba(29, 215, 96, 0.5);
+        cursor: pointer;
+    }
+    
+    .volume-close {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.5rem;
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.3s ease;
+    }
+    
+    .volume-close:hover {
+        background: rgba(255,255,255,0.1);
+        transform: scale(1.1);
+    }
+    
+    /* Smooth scrolling for cards */
+    .cards-container {
+        scroll-behavior: smooth;
+    }
+    
+    /* Enhanced card animations */
+    .card {
+        animation: fadeInUp 0.6s ease forwards;
+        animation-delay: calc(var(--card-index, 0) * 0.1s);
+    }
+    
+    /* Loading states */
+    .loading {
+        opacity: 0.6;
+        pointer-events: none;
+    }
+    
+    .loading::after {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 20px;
+        height: 20px;
+        margin: -10px 0 0 -10px;
+        border: 2px solid rgba(29, 215, 96, 0.3);
+        border-top: 2px solid #1bd760;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    
+    /* Responsive container queries */
+    @container (max-width: 400px) {
+        .card {
+            padding: 0.8rem;
+        }
     }
 `;
 document.head.appendChild(style);
 
+// Add card index for staggered animations
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.card').forEach((card, index) => {
+        card.style.setProperty('--card-index', index);
+    });
+});
+
 // Initialize the player when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    new SpotifyPlayer();
+    // Add loading state
+    document.body.classList.add('loading');
+    
+    // Initialize player after a short delay for smooth loading
+    setTimeout(() => {
+        new SpotifyPlayer();
+        document.body.classList.remove('loading');
+        
+        // Add staggered card animations
+        document.querySelectorAll('.card').forEach((card, index) => {
+            card.style.setProperty('--card-index', index);
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+        
+        // Add intersection observer for lazy loading
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, { threshold: 0.1 });
+            
+            document.querySelectorAll('.card').forEach(card => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                card.style.transition = 'all 0.6s ease';
+                observer.observe(card);
+            });
+        }
+    }, 300);
+});
+
+// Add smooth scroll behavior
+document.documentElement.style.scrollBehavior = 'smooth';
+
+// Performance optimization: Debounce resize events
+let resizeTimeout;
+window.addEventListener('resize', () => {
+    clearTimeout(resizeTimeout);
+    resizeTimeout = setTimeout(() => {
+        // Trigger custom resize event for player
+        window.dispatchEvent(new CustomEvent('optimizedResize'));
+    }, 250);
 });

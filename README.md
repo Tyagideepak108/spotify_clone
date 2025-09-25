@@ -4,7 +4,7 @@ A fully functional Spotify clone built with vanilla HTML, CSS, and JavaScript. T
 
 ## 🚀 Live Demo
 
-[View Live Demo](https://your-username.github.io/spotify-clone) *(Replace with your actual demo link)*
+[View Live Demo](https://deepak-spotify-clone.vercel.app)
 
 ## ✨ Features
 
@@ -54,39 +54,15 @@ spotify-clone/
 
 ## 🚀 Getting Started
 
-### Prerequisites
-- Modern web browser (Chrome, Firefox, Safari, Edge)
-- Local web server (optional, for best experience)
-
-### Installation
-
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/your-username/spotify-clone.git
+   git clone https://github.com/Tyagideepak108/spotify-clone.git
    cd spotify-clone
    ```
 
-2. **Add your audio file**
-   - Place an MP3 file named `song.mp3` in the `assets/` folder
-   - You can use any royalty-free music or your own audio files
-
-3. **Run the application**
-   - **Option 1**: Open `index.html` directly in your browser
-   - **Option 2**: Use a local server (recommended)
-     ```bash
-     # Using Python
-     python -m http.server 8000
-     
-     # Using Node.js
-     npx serve .
-     
-     # Using PHP
-     php -S localhost:8000
-     ```
-
-4. **Open in browser**
-   - Navigate to `http://localhost:8000` (if using local server)
-   - Or simply open the `index.html` file
+2. **Open in browser**
+   - Simply open `index.html` in your browser
+   - Or use a local server for best experience
 
 ## 🎮 Usage
 
@@ -104,101 +80,37 @@ spotify-clone/
 - `↑` - Increase volume
 - `↓` - Decrease volume
 
-## 🎨 Customization
 
-### Adding New Songs
-1. Add MP3 files to the `assets/` folder
-2. Update the `songs` array in `script.js`:
-   ```javascript
-   this.songs = [
-       { title: 'Song Name', artist: 'Artist Name', src: './assets/your-song.mp3' },
-       // Add more songs...
-   ];
-   ```
-
-### Styling
-- Modify `style.css` to change colors, fonts, or layout
-- Update CSS custom properties for theme colors:
-  ```css
-  :root {
-      --spotify-green: #1bd760;
-      --background-dark: #121212;
-      --card-background: #181818;
-  }
-  ```
 
 ## 📱 Responsive Design
 
-The application is fully responsive and includes:
-- **Desktop** (1200px+): Full sidebar and three-column layout
-- **Tablet** (768px-1199px): Condensed sidebar, responsive cards
-- **Mobile** (< 768px): Stacked layout, touch-friendly controls
+- **Desktop**: Full sidebar with three-column layout
+- **Tablet**: Condensed sidebar with responsive grid
+- **Mobile**: Stacked layout with touch-friendly controls
+- **Ultra Mobile**: Optimized compact design
 
 ## 🔧 Technical Highlights
 
-### Object-Oriented JavaScript
-- Modular class-based architecture
-- Separation of concerns
-- Error handling and validation
+- **Modern CSS Grid & Flexbox** - Professional responsive layouts
+- **ES6+ JavaScript Classes** - Clean, modular architecture
+- **Advanced Animations** - Smooth transitions and micro-interactions
+- **Mobile-First Design** - Optimized for all screen sizes
+- **Performance Optimized** - Efficient DOM manipulation and lazy loading
 
-### Modern CSS Features
-- CSS Grid and Flexbox
-- Custom properties (CSS variables)
-- Advanced animations and transitions
-- Responsive design patterns
 
-### Performance Optimizations
-- Efficient DOM manipulation
-- Debounced event handlers
-- Optimized animations
-- Lazy loading considerations
 
-## 🐛 Known Issues & Future Enhancements
 
-### Current Limitations
-- Single audio file support (easily expandable)
-- No playlist persistence
-- No user authentication
-
-### Planned Features
-- [ ] Multiple song support
-- [ ] Playlist creation and management
-- [ ] Local storage for user preferences
-- [ ] Search functionality
-- [ ] Shuffle and repeat modes
-- [ ] Equalizer visualization
-
-## 🤝 Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
-
-1. Fork the project
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
-
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 🙏 Acknowledgments
-
-- **Spotify** - For the design inspiration
-- **Font Awesome** - For the beautiful icons
-- **Google Fonts** - For the Montserrat typography
-- **MDN Web Docs** - For excellent web development resources
 
 ## 📞 Contact
 
-**Your Name** - [your.email@example.com](mailto:your.email@example.com)
+**Deepak Tyagi** - [tyagideepak1007@gmail.com](mailto:tyagideepak1007@gmail.com)
 
-**Project Link**: [https://github.com/your-username/spotify-clone](https://github.com/your-username/spotify-clone)
+**Project Link**: [https://github.com/Tyagideepak108/spotify-clone](https://github.com/Tyagideepak108/spotify-clone)
 
-**Portfolio**: [https://your-portfolio.com](https://your-portfolio.com)
+**Live Demo**: [https://deepak-spotify-clone.vercel.app](https://deepak-spotify-clone.vercel.app)
 
 ---
 
 ⭐ **Star this repository if you found it helpful!**
 
-*Built with ❤️ and lots of ☕*
+*Built with ❤️ by Deepak Tyagi*
